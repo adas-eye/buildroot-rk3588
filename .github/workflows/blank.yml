@@ -1,36 +1,58 @@
-# This is a basic workflow to help you get started with Actions
+# Test build job
 
-name: CI
+name: BUILD
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# Triggers the workflow on push or pull request events
+on: [ workflow_dispatch, pull_request ]
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  build-buildroot:
+    runs-on: ubuntu-20.04
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - uses: actions/checkout@v2
+        with:
+          path: buildroot-rk3588
+          
+      - name: Install depends
+        run: sudo apt-get install -y debianutils sed make binutils build-essential gcc g++ bash patch gzip bzip2 perl tar cpio unzip rsync file bc git
+              
+      - name: Submodules init
+        working-directory: ./buildroot-rk3588
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          git submodule init
+          git submodule update --recursive
+           
+      - name: Configure Buildroot
+        working-directory: ./buildroot
+        run: make BR2_EXTERNAL=../external rock5b_defconfig
+      
+      - name: Build Buildroot
+        working-directory: ./buildroot
+        run: make -j32
+      
+      - name: Run legal-info
+        working-directory: ./buildroot
+        run: make legal-info
+        
+      - name: Create SDK 
+        working-directory: ./buildroot
+        run: make sdk
+        
+      - name: Copy artifacts
+        working-directory: ./buildroot
+        run: | 
+          mkdir ~/artifacts
+          cp -v output/images/sdcard.img ~/artifacts
+          mkdir ~/sdk
+          cp -v output/images/*sdk*.tar.gz ~/sdk
+      
+      - name: Upload Artifact GitHub Action
+        uses: actions/upload-artifact@v2
+        with: 
+          name: download-artifacts
+          path: ~/artifacts
+          
+      - name: Upload SDK GitHub Action
+        uses: actions/upload-artifact@v2
+        with: 
+          name: download-sdk
+          path: ~/sdk
