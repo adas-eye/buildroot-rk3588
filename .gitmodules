@@ -10,3 +10,6 @@
 	path = external/uboot
 	url = git@github.com:Military-Vehicle-Detection/u-boot.git
 	branch = stable-5.10-rock5
+[submodule "external/rkbin"]
+	path = external/rkbin
+	url = git@github.com:Military-Vehicle-Detection/rkbin.git
