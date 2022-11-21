@@ -38,9 +38,15 @@ git submodule update --recursive
 cd buildroot
 make BR2_EXTERNAL=../external rock5b_defconfig
 make -j8
+
+# NOTE: for minimum print log during build run brmake utility 
+utils/brmake
 ```
 
 If the build was successful, you will find `sdcard.img` in the output/image folder which is ready to be written to an EMMC or SD card
+
+### Auto build
+TODO: need to make build bash scripts and update README
 
 ### Configure buildoot
 
@@ -64,5 +70,98 @@ make -j8
 ```
 
 
-TODO: need to make full instructions: rebuild, flash image, add new package for build
+## How to flash image
+TODO: need to update
+
+
+## How to use SDK
+
+You can download SDK for developing SW from jobs GitHub Actions or build SDK locally:
+
+1. Download SDK from CI/CD
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/blob/bsp/doc/images/ScreenShot%202022-11-20%20%D0%B2%2014.01.39.png)
+
+2. Unpack file to local folder, example `/opt/sdk`
+
+```bash
+# NOTE: for unpack to /opt folder need root access
+cd ~/Downloads
+sudo tar -xvf aarch64-buildroot-linux-gnu_sdk-buildroot.tar.gz -C /opt
+```
+
+3. Run relocate script `relocate-sdk.sh`
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/sdk.png)
+
+4. Get SDK environment from file `environment-setup`
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/env.png)
+
+5. Check SDK environment, compiler, cflags, etc
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/gcc.png)
+
+## How to use SDK via IDE: Clion, VSCode, QTcreator, etc
+
+For easy coding, it's better to use IDE
+
+An example of how you can integrate the SDK into the CLion development environment
+
+1. Install IDE, you can download from https://www.jetbrains.com/clion/
+2. Create C or C++ hello-world application
+3. Go to settings tab: File->Settings
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/1.png)
+
+4. Create new settings for cross-compiler 
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/2.png)
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/3.png)
+
+5. Change cmake settings: system compiller to cross-compiler 
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/4.png)
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/5.png)
+
+6. Build hello-world application 
+
+
+## How to debug app via gdb and ssh
+
+### Clion gdb
+
+Full instructions: https://www.jetbrains.com/help/clion/remote-debug.html
+
+1. Go to build configuration and add 
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/6.png)
+
+2. Create new Debug/Run configuration, you can change debug folder, environment variable, etc. 
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/11.png)
+
+3. Create new SSH credentials for your target
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/7.png)
+
+4. Run debug button, enjoy 
+
+### Upload executions file via SSH
+
+Yuo can uoload executions file via ssh: example command `scp <path_to_file> root@192.x.x.x:<path_to_upload>`
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/9.png)
+
+After you connect to the console target via ssh or UART and you can run your application
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/bsp/doc/images/clion/10.png)
+
+
+TODO: need to update for QT creator and VSCode
+
+
+## How to build C/C++ hello-world app for target
+TODO: need to update
+
+## How to add new packages for build image
+TODO: need to update
 
