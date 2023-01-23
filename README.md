@@ -19,7 +19,7 @@ For Debian/Ubuntu distributions, the following command allows to install the nec
 
 ```bash
 # TODO: need to check all depends
-$ sudo apt install debianutils sed make binutils build-essential gcc g++ bash patch gzip bzip2 perl tar cpio unzip rsync file bc git
+$ sudo apt install debianutils sed make binutils build-essential gcc g++ bash patch gzip bzip2 perl tar cpio unzip rsync file bc git device-tree-compiler
 ```
 
 ### Manual build
