@@ -2,6 +2,11 @@
 
 case "$1" in
 	start)
+		if [ -x "$(command -v psplash-write)" ]; then
+      		   /usr/bin/psplash-write "MSG INIT NPU MODULE"
+      		   /usr/bin/psplash-write "PROGRESS 50"
+    		fi
+
 		printf "insmod NPU modules: "
 		# insmod /lib/modules/rknpu.ko
 		unset MAX_FREQ

@@ -29,6 +29,14 @@ done
 
 case "$1" in
   start)
+  
+  	if [ -x "$(command -v psplash-write)" ]; then
+  	    /usr/bin/psplash-write "MSG START UI"
+           /usr/bin/psplash-write "PROGRESS 100"
+	fi
+	echo "Stopping psplash"
+        killproc psplash
+	
 
         #. /etc/profile
 	export LANG=en_US.UTF-8

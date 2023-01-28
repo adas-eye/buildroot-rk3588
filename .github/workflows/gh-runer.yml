@@ -1,7 +1,6 @@
-
 # Build the Buildroot and make SDK
 
-name: build
+name: GitHub Runer
 
 # Triggers the workflow on push or pull request events
 on:
@@ -25,7 +24,8 @@ jobs:
     # runs-on: ubuntu-20.04
     # for test self-hosted
     # runs-on: self-hosted
-    runs-on: runer-ubuntu-20
+    runs-on: ubuntu-20.04-32-cores
+
     steps:
         - uses: actions/checkout@v3
           with:
