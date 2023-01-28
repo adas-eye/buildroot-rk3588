@@ -88,7 +88,20 @@ make -j8
 ```
 
 
-## How to flash image (SD Card)
+## How to flash image
+
+RK3588 supports booting from the following storage devices:
+1. SD card;
+2. eMMC;
+
+There are two firmware file formats:
+1. Raw Firmware;
+2. RK Firmware;
+
+Raw Firmware can be flashed to the SD card and eMMC.
+
+### SD Card flashing
+
 Insert your sd card into your drive and check dev name by "lsblk" command.
 Example of "lsblk" usage:
 
@@ -123,6 +136,39 @@ sudo dd if=output/images/sdcard.img of=/dev/sdx
 Remember that the mounting point "/dev/sdx" of your SD card may be different on your distribution.
 Once done, plug the SD Card into the Rock 5B and power the card. You will see the bootloader running normally
 and you will be presented to login screen where the default user is root, no password needed.
+
+### eMMC flashing
+
+Please find information about Rockchip flashing tools here: [RKDevTool](https://wiki.radxa.com/Rock5/install/rockchip-flash-tools)
+
+Raw Firmware needs to be flashed to offset 0 of eMMC storage. However, in Rockusb Mode,
+all LBA writes are offset by 0x2000 sectors. Therefore, the device has to be forces into Maskrom Mode.
+
+![alt text](https://github.com/Military-Vehicle-Detection/buildroot-rk3588/raw/update_readme/doc/images/Rock-5b-typec-maskrom.jpeg)
+
+To boot ROCK 5B to Maskrom mode is simple:
+
+1. Power off the board.
+2. Remove bootable device like MicroSD card, eMMC module, etc.
+3. Press the golden (or silver on some board revisions) button and hold it.
+4. Plug the USB-A to Type-C cable to ROCK 5B Type-C port, the other side to PC.
+5. Release the golded button.
+6. Check usb device:
+ - For macOS host: lsusb result: Bus 002 Device 032: ID 2207:350b Fuzhou Rockchip Electronics Co., Ltd. Composite Device
+ - For Linux host: lsusb result: Bus 001 Device 112: ID 2207:350b Fuzhou Rockchip Electronics Company
+ - For Windows host: Open RKDevTool and you would see the device is in Found One MASKROM Device
+
+After that run these commands in prompt:
+
+```bash
+cd ~/buildroot-rk3588
+sudo rkdeveloptool ld
+sudo rkdeveloptool db ./external/rkbin/bin/rk35/rk3588_spl_loader_v1.08.111.bin
+sudo rkdeveloptool wl 0x0 ./buildroot/output/images/sdcard.img
+sudo rkdeveloptool rd
+```
+
+You can find more information about Rock 5B image installation [here](https://wiki.radxa.com/Rock5/install).
 
 ## How to use SDK
 
@@ -314,7 +360,29 @@ your hello world app. Firts be sure you install this utility (Ubuntu, Debian):
 sudo apt-get install cmake
 ```
 
-2. In your hello-world app create "CMakeLists.txt" file with content below:
+### Configure enviroment in terminal
+
+In this case be sure you already install SDK.
+To build your project run commands below in terminal to configure environment for RK3588 target compilation.
+
+```bash
+bash /opt/aarch64-buildroot-linux-gnu_sdk-buildroot/relocate-sdk.sh
+source /opt/aarch64-buildroot-linux-gnu_sdk-buildroot/environment-setup
+```
+
+Then your project:
+
+```bash
+cd ~/your_project
+mkdir build
+cd build
+cmake ..
+make -j4
+```
+
+### Using Cmake file with environment variables
+
+In your hello-world app create "CMakeLists.txt" file with content below:
 ```bash
 # Usage example:
 # $ mkdir build && cd build && cmake -DTOOLCHAIN_PATH=/opt .. && make
