@@ -46,7 +46,7 @@ case "$1" in
 	mkdir --parents $XDG_RUNTIME_DIR
 	
 
-        weston --tty=2 --log=/tmp/weston.log --debug --idle-time=0&
+        weston --backend=drm-backend.so --tty=2 --log=/tmp/weston.log --debug --idle-time=0&
         
   ;;
 
