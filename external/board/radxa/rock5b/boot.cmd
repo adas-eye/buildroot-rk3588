@@ -4,12 +4,22 @@ charge_pd
 
 echo "loading boot vars"
 setenv load_addr $ramdisk_addr_r
-setenv devnum 1
-load mmc ${devnum} ${load_addr} vars.txt
+echo "load from: ${devtype} ${devnum} ${load_addr} vars.txt"
+load ${devtype} ${devnum} ${load_addr} vars.txt
 env import -t ${load_addr} ${filesize}
 
-echo "setting boot args"
-setenv bootargs "root=/dev/mmcblk0p2 earlyprintk console=ttyS2,115200n8 rw rootwait"
+echo "Setting boot args"
+if test ${devnum} = "1"; then 
+	setenv mmc_type 0
+elif test ${devnum} = "0"; then 
+	setenv mmc_type 1
+else  echo "Failed detect mmc type"
+fi
+echo "mmc_type: ${mmc_type}"
+
+setenv bootargs "root=/dev/mmcblk${mmc_type}p2 earlyprintk console=ttyS2,115200n8 rw rootwait"
+echo "bootargs: ${bootargs}"
+
 fatload mmc ${devnum}:${distro_bootpart} ${fdt_addr_r} ${fdtfile}
 fatload mmc ${devnum}:${distro_bootpart} ${kernel_addr_r} Image
 
